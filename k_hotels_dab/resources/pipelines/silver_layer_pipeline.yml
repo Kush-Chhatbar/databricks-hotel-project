@@ -1,0 +1,15 @@
+resources:
+  pipelines:
+    pipeline_dlt_silver_layer:
+      name: DLT_SILVER_LAYER
+      libraries:
+        - glob:
+            include: ../../src/DLT_SILVER_LAYER/transformations/**
+      schema: silver
+      continuous: false
+      development: false
+      photon: true
+      channel: CURRENT
+      catalog: workspace
+      serverless: true
+      root_path: ../../src/DLT_SILVER_LAYER
