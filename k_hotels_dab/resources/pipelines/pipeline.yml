@@ -13,3 +13,18 @@ resources:
       catalog: workspace
       serverless: true
       root_path: ../../src/DLT_SILVER_LAYER
+    
+    pipeline_dlt_gold_layer:
+      name: DLT_GOLD_LAYER
+      libraries:
+        - glob:
+            include: ../../src/DLT_GOLD_LAYER/transformations/**
+      schema: gold
+      continuous: false
+      development: false
+      photon: true
+      channel: CURRENT
+      catalog: workspace
+      serverless: true
+      root_path: ../../src/DLT_GOLD_LAYER
+
