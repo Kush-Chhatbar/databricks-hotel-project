@@ -1,0 +1,24 @@
+resources:
+  jobs:
+    Bronze_Layer_Ingestion_Job:
+      name: Bronze Layer Ingestion Job
+      tasks:
+        - task_key: Parameters
+          notebook_task:
+            notebook_path: ../../src/notebooks/SrcParameters.ipynb
+            source: WORKSPACE
+        - task_key: Incremental_Ingestion_Iteration
+          depends_on:
+            - task_key: Parameters
+          for_each_task:
+            inputs: "{{tasks.Parameters.values.output_key}}"
+            task:
+              task_key: Incremental_Ingestion_iteration
+              notebook_task:
+                notebook_path: ../../src/notebooks/01_bronze_ingestion.ipynb
+                base_parameters:
+                  source: "{{input.src}}"
+                source: WORKSPACE
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
