@@ -18,7 +18,7 @@ resources:
       name: DLT_GOLD_LAYER
       libraries:
         - glob:
-            include: ../../src/DLT_GOLD_LAYER/transformations/**
+            include: ${workspace.file_path}/src/DLT_GOLD_LAYER/gold_layer_pipeline.py
       schema: gold
       continuous: false
       development: false
@@ -26,4 +26,5 @@ resources:
       channel: CURRENT
       catalog: workspace
       serverless: true
-      root_path: ../../src/DLT_GOLD_LAYER
+      root_path: ${workspace.file_path}/src/DLT_GOLD_LAYER/gold_layer_pipeline.py
+      
