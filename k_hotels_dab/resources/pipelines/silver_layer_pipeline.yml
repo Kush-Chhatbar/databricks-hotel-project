@@ -3,8 +3,8 @@ resources:
     pipeline_dlt_silver_layer:
       name: DLT_SILVER_LAYER
       libraries:
-        - glob:
-            include: ../../src/DLT_SILVER_LAYER/transformations/**
+        - file:
+            path: ${workspace.file_path}/src/DLT_SILVER_LAYER/silver_layer_pipeline.py
       schema: silver
       continuous: false
       development: false
@@ -12,4 +12,4 @@ resources:
       channel: CURRENT
       catalog: workspace
       serverless: true
-      root_path: ../../src/DLT_SILVER_LAYER
+      root_path: ${workspace.file_path}/src/DLT_SILVER_LAYER
