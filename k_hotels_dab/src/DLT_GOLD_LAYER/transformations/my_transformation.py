@@ -32,6 +32,7 @@ def prepare_gold_hotel_bookings(df: DataFrame) -> DataFrame:
         )
     )
 
+
 def aggregate_hotel_booking_summary(df: DataFrame) -> DataFrame:
     return df.groupBy("hotel").agg(
         F.count("*").alias("total_bookings"),
