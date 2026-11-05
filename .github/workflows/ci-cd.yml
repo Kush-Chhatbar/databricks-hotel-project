@@ -64,38 +64,38 @@ jobs:
   # ==========================================
   # JOB 2: DEPLOY TO DATABRICKS PRODUCTION
   # ==========================================
-deploy:
-  name: Deploy Databricks Production
-  runs-on: ubuntu-latest
-  needs: test
+  deploy:
+    name: Deploy Databricks Production
+    runs-on: ubuntu-latest
+    needs: test
 
-  if: >
-    github.event_name == 'push' &&
-    github.ref == 'refs/heads/main'
+    if: >
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main'
 
-  environment: production
+    environment: production
 
-  defaults:
-    run:
-      working-directory: k_hotels_dab
+    defaults:
+      run:
+        working-directory: k_hotels_dab
 
-  steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Install Databricks CLI
-      uses: databricks/setup-cli@main
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
 
-    - name: Validate production bundle
-      env:
-        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-      run: |
-        databricks bundle validate -t prod
+      - name: Validate production bundle
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          databricks bundle validate -t prod
 
-    - name: Deploy production bundle
-      env:
-        DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-        DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-      run: |
-        databricks bundle deploy -t prod
+      - name: Deploy production bundle
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: |
+          databricks bundle deploy -t prod
