@@ -12,7 +12,7 @@ resources:
       channel: CURRENT
       catalog: workspace
       serverless: true
-      root_path: ${workspace.file_path}/src/DLT_SILVER_LAYER/
+      root_path: ${workspace.file_path}/src/DLT_SILVER_LAYER
     
     pipeline_dlt_gold_layer:
       name: DLT_GOLD_LAYER
@@ -26,5 +26,5 @@ resources:
       channel: CURRENT
       catalog: workspace
       serverless: true
-      root_path: ${workspace.file_path}/src/DLT_GOLD_LAYER/
+      root_path: ${workspace.file_path}/src/DLT_GOLD_LAYER
       
