@@ -40,35 +40,19 @@ def run_query(sql_text: str) -> pd.DataFrame:
         err = response.status.error.message if response.status.error else response.status.state
         raise RuntimeError(f"Query failed: {err}")
 
-    columns = [c.name for c in response.result.schema.columns]
-    rows = []
-    result = response.result
-    rows.extend(result.data_array or [])
-    while result.next_chunk_index is not None:
-        chunk = w.statement_execution.get_statement_result_chunk(
+    # In this SDK version, the schema lives on response.manifest and rows are plain lists.
+    columns = [c.name for c in response.manifest.schema.columns]
+    rows = list(response.result.data_array or [])
+    next_chunk = response.result.next_chunk_index
+    while next_chunk is not None:
+        chunk = get_client().statement_execution.get_statement_result_chunk_n(
             statement_id=response.statement_id,
-            chunk_index=result.next_chunk_index,
+            chunk_index=next_chunk,
         )
         rows.extend(chunk.data_array or [])
-        result = chunk
+        next_chunk = chunk.next_chunk_index
 
-    return pd.DataFrame([_row_to_list(r) for r in rows], columns=columns)
-
-
-def _row_to_list(row):
-    values = list(row.values) if not isinstance(row.values, list) else row.values
-    return [_unwrap(v) for v in values]
-
-
-def _unwrap(v):
-    # Values are plain JSON primitives with JSON_ARRAY format, but tolerate SDK wrappers.
-    if v is None or isinstance(v, (str, int, float, bool)):
-        return v
-    for attr in ("str", "double", "long", "boolean", "int"):
-        val = getattr(v, attr, None)
-        if val is not None:
-            return val
-    return str(v)
+    return pd.DataFrame(rows, columns=columns)
 
 
 @st.cache_data(ttl=300)
@@ -84,6 +68,13 @@ def load_data():
         "array_position(array('January','February','March','April','May','June','July',"
         "'August','September','October','November','December'), arrival_month)"
     )
+    # Values arrive as strings from the JSON_ARRAY format — coerce numeric columns.
+    for col in ["total_bookings", "canceled_bookings", "non_canceled_bookings"]:
+        summary[col] = pd.to_numeric(summary[col], errors="coerce").fillna(0).astype(int)
+    for col in ["total_bookings", "canceled_bookings"]:
+        trends[col] = pd.to_numeric(trends[col], errors="coerce").fillna(0).astype(int)
+    for col in ["estimated_room_revenue", "checked_out_bookings", "average_adr"]:
+        revenue[col] = pd.to_numeric(revenue[col], errors="coerce")
     return summary, trends, revenue
 
 
